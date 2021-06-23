@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+{% block body %}
+
+<div class="container-fluid">
+  <br>
+  <div>
+    <div>
+      <div class="h-100 p-3 bg-light border rounded-3">
+        <h2>Manage Employees <button type="button" class="btn btn-outline-success float-end"
+          data-bs-toggle="modal" data-bs-target="#addmodal">Add New Employee</button></h2>
+        
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissable" role="alert">
+          <button type="button" class="btn btn-outline-danger btn-sm align-top float-end close" data-bs-dismiss="alert" aria-labelledby="close">
+            <span aria-hidden="true"><b>X</b></span>
+          </button>
+          {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <table class="table table-responsive table-secondary table-hover text-center">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Mobile No.</th>
+              <th>Email</th>
+              <th>SSS</th>
+              <th>Pag-IBIG</th>
+              <th>PhilHealth</th>
+              <th>Date Hired</th>
+              <th>Status</th>
+              <th>Remarks</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in employees %}
+              <tr>
+                <td>{{row.id}}</td>
+                <td>{{row.name}}</td>
+                <td>{{row.address}}</td>
+                <td>{{row.mobile}}</td>
+                <td>{{row.email}}</td>
+                <td>{{row.sss}}</td>
+                <td>{{row.pagibig}}</td>
+                <td>{{row.philhealth}}</td>
+                <td>{{row.hired}}</td>
+                <td>{{row.status}}</td>
+                <td>{{row.remarks}}</td>
+                <td>
+                  <a href="/update/{{row.id}}" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editmodal{{row.id}}">Edit</a>
+                </td>
+              </tr>
+          </tbody>
+
+    <!-- Modal Edit Employee-->
+    <div class="modal fade" id="editmodal{{row.id}}" tabindex="-1" data-bs-backdrop="static" aria-labelledby="editmodallabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header text-white red">
+              <h4 class="modal-title">Edit Information</h4>
+            </div>
+            <div class="modal-body">
+              <form action="{{url_for('update')}}" method="POST">
+                  <div class="form-group mb-3">
+                    <label>Employee ID</label>
+                    <input type="number" class="form-control" name="id" value="{{row.id}}">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name" value="{{row.name}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Address</label>
+                    <input type="text" class="form-control" name="address" value="{{row.address}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Mobile No.</label>
+                    <input type="number" class="form-control" name="mobile" maxlength="11" value="{{row.mobile}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" value="{{row.email}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>SSS Number</label>
+                    <input type="number" class="form-control" name="sss" value="{{row.sss}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Pag-IBIG Number</label>
+                    <input type="number" class="form-control" name="pagibig" value="{{row.pagibig}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>PhilHealth Number</label>
+                    <input type="number" class="form-control" name="philhealth" value="{{row.philhealth}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Date Hired</label>
+                    <input type="date" class="form-control" name="hired" value="{{row.hired}}">
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Status</label>
+                    <select class="form-select" aria-label="status" name="status" value="{{row.status}}">
+                      {% if row.status == "Active" %}
+                        <option disabled>Select Employee Status</option>
+                        <option value="Active" selected>Active</option>
+                        <option value="Resigned">Resigned</option>
+                      {% else %}
+                        <option disabled>Select Employee Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Resigned" selected>Resigned</option>
+                      {% endif %}
+                    </select>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Remarks:</label>
+                    <input type="text" class="form-control" name="remarks" value="{{row.remarks}}">
+                  </div>
+                  <br>
+                  <div class="form-group">
+                    <button class="btn btn-outline-success float-end p-3" type="submit">Update</button>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-outline-danger float-start p-3" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+          {% endfor %}
+
+  </table>
+</div>
+
+    <!-- Modal Add Employee-->
+    <div class="modal fade" id="addmodal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addmodallabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header text-white red">
+              <h4 class="modal-title">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+              <form action="{{url_for('insert')}}" method="POST">
+                  <div class="form-group mb-3">
+                    <label>Employee ID</label>
+                    <input type="number" class="form-control" name="id" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Address</label>
+                    <input type="text" class="form-control" name="address" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Mobile No.</label>
+                    <input type="number" class="form-control" name="mobile" maxlength="11" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>SSS Number</label>
+                    <input type="number" class="form-control" name="sss" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Pag-IBIG Number</label>
+                    <input type="number" class="form-control" name="pagibig" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>PhilHealth Number</label>
+                    <input type="number" class="form-control" name="philhealth" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Date Hired</label>
+                    <input type="date" class="form-control" name="hired" required>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label>Status</label>
+                    <select class="form-select" aria-label="status" name="status" required>
+                      <option disabled selected>Select Employee Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Resigned">Resigned</option>
+                    </select>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label>Remarks:</label>
+                    <input type="text" class="form-control" name="remarks" required>
+                  </div>
+                  <br>
+                  <div class="form-group">
+                    <button class="btn btn-outline-success float-end p-3" type="submit">Add Employee</button>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-outline-danger float-start p-3" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
